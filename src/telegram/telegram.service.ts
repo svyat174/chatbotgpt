@@ -15,11 +15,20 @@ export class TelegramService extends Telegraf<Context> {
 
   @Start()
   onStart(@Ctx() ctx: Context) {
-    ctx.reply(`Hello, ${ctx.from.first_name}!`);
+    try {
+      ctx.reply(`Hello, ${ctx.from.first_name}!`);
+    } catch (error) {
+      ctx.reply('Произошла ошибка');
+    }
   }
 
   @On('text')
-  onMessage(@Message('text') text: string) {
-    return this.chatgptService.generateResponse(text);
+  onMessage(@Message('text') text: string, @Ctx() ctx: Context) {
+    try {
+      ctx.reply('Подождите, идет обработка запроса...⏱');
+      return this.chatgptService.generateResponse(text);
+    } catch (error) {
+      ctx.reply('Произошла ошибка');
+    }
   }
 }
